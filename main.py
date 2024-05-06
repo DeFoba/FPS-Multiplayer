@@ -2,8 +2,8 @@ from ursina import Ursina, camera, Text, Vec3, Entity
 from modules.player import Player, NetworkPlayer
 
 
-app = Ursina(borderless=False, size=(600, 500))
-# app = Ursina(borderless=False)
+# app = Ursina(borderless=False, size=(600, 500))
+app = Ursina(borderless=False)
 MODE = None
 
 

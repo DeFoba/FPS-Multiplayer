@@ -13,6 +13,16 @@ class Hand(Entity):
         # self.position = (0.5, 0, 0)
         self.origin = (0, 0, -.6)
 
+class Wheel(Entity):
+    def __init__(self):
+        super().__init__()
+
+        self.model = 'models/player/robot-weels'
+        self.texture = 'models/player/WheelsTex'
+        self.scale = .8
+        self.origin = (0, 0, 0)
+        self.y = -.9
+
 
 class Player(FirstPersonController):
     def __init__(self):
@@ -50,6 +60,9 @@ class NetworkPlayer(Entity):
 
         self.hand = Hand()
         self.hand.parent = self
+
+        self.wheel = Wheel()
+        self.wheel.parent = self
 
         self.face = Text(parent=self, text='0_0', position=(0, 1.5, 1.2), scale=20, rotation=(0, self.rotation_y, 0), origin=(0, 0, 0))
         self.face.rotation = (0, self.rotation_y + 180, 0)
