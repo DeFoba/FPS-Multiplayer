@@ -1,5 +1,6 @@
 from ursina import Ursina, camera, Text, Vec3, Entity
 from modules.player import Player, NetworkPlayer
+from modules.menu import Menu
 
 
 # app = Ursina(borderless=False, size=(600, 500))
@@ -8,8 +9,9 @@ MODE = None
 
 
 
-from modules.world import ground
-player = Player()
+# from modules.world import ground
+# player = Player()
+menu = Menu()
 
 
 def input(key):
@@ -26,7 +28,7 @@ def input(key):
                 import newtwork.client
                 newtwork.client.start(player)
 
-# NetworkPlayer()
+NetworkPlayer()
 
 if __name__ == '__main__':
     app.run()
