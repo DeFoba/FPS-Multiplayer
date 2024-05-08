@@ -47,7 +47,7 @@ class Player(FirstPersonController):
 
 
 class NetworkPlayer(Entity):
-    def __init__(self):
+    def __init__(self, nickname='0_0'):
         super().__init__(collider='box')
 
         self.model = 'models/player/robot'
@@ -56,7 +56,7 @@ class NetworkPlayer(Entity):
         self.scale = .7
         self.position = (0, 1, 0)
 
-        
+        self.nickname = nickname
 
         self.hand = Hand()
         self.hand.parent = self
@@ -64,7 +64,7 @@ class NetworkPlayer(Entity):
         self.wheel = Wheel()
         self.wheel.parent = self
 
-        self.face = Text(parent=self, text='0_0', position=(0, 1.5, 1.2), scale=20, rotation=(0, self.rotation_y, 0), origin=(0, 0, 0))
+        self.face = Text(parent=self, text=self.nickname, position=(0, 1.5, 1.2), scale=20, rotation=(0, self.rotation_y, 0), origin=(0, 0, 0))
         self.face.rotation = (0, self.rotation_y + 180, 0)
 
         self.color = color.random_color()

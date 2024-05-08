@@ -4,12 +4,16 @@ from modules.player import NetworkPlayer
 
 HOST, PORT = '192.168.0.101', 5054
 
-def start(player):
+def start(player, face):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((HOST, PORT))
 
     def sending_data():
-        net_player = NetworkPlayer()
+        client.send(face.encode())
+        netwowrk_face = client.recv(1024).decode()
+
+        net_player = NetworkPlayer(netwowrk_face)
+
 
         while True:
             # print([player.x, player.y, player.z])
