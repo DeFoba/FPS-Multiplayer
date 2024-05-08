@@ -9,19 +9,50 @@ class Hand(Entity):
 
         self.model = 'cube'
         self.scale = (0.2, 0.2, 1)
+        # self.position = (0.5, 1.8, 0.2)
+        # self.position = (0.5, 0, 0)
+        self.origin = (0, 0, -.6)
+
+class PlayerHand(Entity):
+    def __init__(self):
+        super().__init__()
+
+        self.model = 'cube'
+        self.scale = (0.2, 0.2, 1)
         self.position = (0.5, 1.8, 0.2)
         # self.position = (0.5, 0, 0)
         self.origin = (0, 0, -.6)
+
+    # def update(self):
+    #     self.rotation_x += 1
 
 class Wheel(Entity):
     def __init__(self):
         super().__init__()
 
         self.model = 'models/player/robot-weels'
-        self.texture = 'models/player/WheelsTex'
-        self.scale = .8
+        self.texture = 'models/player/textures/WheelsTex'
+        self.scale = (1.1, 2, 2)
         self.origin = (0, 0, 0)
         self.y = -.9
+
+class Monitor(Entity):
+    def __init__(self, nickname):
+        super().__init__()
+
+        self.model = 'models/player/RobotMonitor'
+        self.texture = 'models/player/textures/RobotMonitorTex'
+        self.scale = 1
+        self.origin = (0, 0, 0)
+
+        self.nickname = nickname
+
+        self.face = Text(parent=self, text=self.nickname, position=(0, 0, 1.8), scale=20, rotation=(0, self.rotation_y, 0), origin=(0, 0, 0))
+        self.face.rotation = (0, self.rotation_y + 180, 0)
+
+    # def update(self):
+    #     self.rotation_x += 1
+
 
 
 class Player(FirstPersonController):
@@ -29,7 +60,7 @@ class Player(FirstPersonController):
         super().__init__()
         self.hp = HealthBar()
 
-        self.hand = Hand()
+        self.hand = PlayerHand()
         self.hand.parent = self
         # self.hand.parent = self.camera_pivot
 
@@ -50,11 +81,13 @@ class NetworkPlayer(Entity):
     def __init__(self, nickname='0_0'):
         super().__init__(collider='box')
 
-        self.model = 'models/player/robot'
-        self.texture = 'models/player/robot'
+        self.color = color.random_color()
+
+        self.model = 'models/player/RobotBody'
+        self.texture = 'models/player/textures/RobotBodyTex'
         # self.scale = (1, 2, 1)
-        self.scale = .7
-        self.position = (0, 1, 0)
+        self.scale = .4
+        self.position = (0, 1.8, 0)
 
         self.nickname = nickname
 
@@ -63,16 +96,18 @@ class NetworkPlayer(Entity):
 
         self.wheel = Wheel()
         self.wheel.parent = self
+        self.wheel.position = (0, -3, 0)
 
-        self.face = Text(parent=self, text=self.nickname, position=(0, 1.5, 1.2), scale=20, rotation=(0, self.rotation_y, 0), origin=(0, 0, 0))
-        self.face.rotation = (0, self.rotation_y + 180, 0)
+        self.monitor = Monitor(self.nickname)
+        self.monitor.parent = self
+        self.monitor.color = self.color
+        self.monitor.position = (0, 0, 0)
 
-        self.color = color.random_color()
 
-        self.hand.scale = (0.2, 0.2, 1.3)
+
+        self.hand.scale = (0.2, 0.2, 1.3) * 2
+        self.hand.position = (3, 0, 0)
         self.hand.color = self.color
-        self.hand.y = self.y + .3
-        self.hand.x += .7
 
     def update(self):
         pass

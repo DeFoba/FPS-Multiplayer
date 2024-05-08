@@ -13,7 +13,7 @@ MODE = None
 # player = Player()
 menu = Menu()
 
-# NetworkPlayer()
+NetworkPlayer()
 
 if __name__ == '__main__':
     app.run()
