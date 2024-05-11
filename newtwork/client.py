@@ -2,7 +2,7 @@ import socket
 from threading import Thread
 from modules.player import NetworkPlayer
 
-HOST, PORT = '192.168.0.101', 5054
+HOST, PORT = '192.168.0.102', 5054
 MY_ADDR = ''
 
 net_players = {}

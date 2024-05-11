@@ -2,19 +2,26 @@ import socket
 from threading import Thread
 from modules.player import NetworkPlayer
 
-HOST, PORT = '192.168.0.101', 5054
+HOST, PORT = '192.168.0.102', 5054
 
+net_players_entity = []
+net_players_clients = []
 net_players = {}
 
 def start(player, face):
-    net_players['admin'] = player
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((HOST, PORT))
     server.listen()
 
+    net_players['admin'] = [player, server]
+
+
     def accepted_player(client, addr):
         addr = str(addr)
         net_players[str(addr)] = [NetworkPlayer(), client]
+        net_players_entity.append(net_players[str(addr)][0])
+        net_players_clients.append(client)
+
         print('Connected addr:', addr)
 
         net_player, _ = net_players[addr]
@@ -36,12 +43,13 @@ def start(player, face):
     
     def _thread_sending_all_positions():
         while True:
-            for addr in net_players:
-                net_player, client = net_players[addr]
-                clients = [net_players[adr][1] for adr in net_players]
+            # for addr in net_players:
+            #     net_player, client = net_players[addr]
 
-                for client in clients:
-                    client.sendall(str(','.join([str(addr), str(net_player.x), str(net_player.y), str(net_player.z), str(net_player.rotation.y), str(net_player.hand.rotation.x)])).encode())
+            for net_player in net_players_entity:
+
+                for client in net_players_clients:
+                    client.send(str(','.join([str('addr'), str(net_player.x), str(net_player.y), str(net_player.z), str(net_player.rotation.y), str(net_player.hand.rotation.x)])).encode())
 
 
     def loop_for_accepting():
