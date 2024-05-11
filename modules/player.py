@@ -78,10 +78,10 @@ class Player(FirstPersonController):
 
 
 class NetworkPlayer(Entity):
-    def __init__(self, nickname='0_0'):
+    def __init__(self, nickname='0_0', pl_color=color.random_color()):
         super().__init__(collider='box')
 
-        self.color = color.random_color()
+        self.color = pl_color
 
         self.model = 'models/player/RobotBody'
         self.texture = 'models/player/textures/RobotBodyTex'

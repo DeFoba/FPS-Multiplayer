@@ -3,33 +3,41 @@ from threading import Thread
 from modules.player import NetworkPlayer
 
 HOST, PORT = '192.168.0.101', 5054
+MY_ADDR = ''
+
+net_players = {}
 
 def start(player, face):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((HOST, PORT))
 
     def sending_data():
-        client.send(face.encode())
-        netwowrk_face = client.recv(1024).decode()
+        global MY_ADDR
 
-        net_player = NetworkPlayer(netwowrk_face)
-
+        addr = client.recv(1024).decode()
+        MY_ADDR = addr
 
         while True:
-            # print([player.x, player.y, player.z])
-            # print(str(','.join([player.x, player.y, player.z])))
             client.send(str(','.join([str(player.x), str(player.y), str(player.z), str(player.rotation.y), str(player.hand.rotation.x)])).encode())
 
             data = client.recv(1024)
-            # print(data)
 
-            x, y, z, player_angle, hand_angle = [float(pos) for pos in data.decode().split(',')]
-            net_player.position = (x, y + 1, z)
+            print(f'Data is: "{data.decode()}"')
 
-            net_player.rotation = (0, player_angle, 0)
-            net_player.hand.rotation = (hand_angle, 0, 0)
+            id, x, y, z, player_angle, hand_angle = [pos for pos in data.decode().split(',')]
 
-            # print(x, y, z)
+            if not id in net_players:
+                net_players[id] = NetworkPlayer()
+                net_players[id].y = 1.8
+
+            x, y, z, player_angle, hand_angle = float(x), float(y), float(z), float(player_angle), float(hand_angle)
+
+            net_players[id].position = (x, y + 1.8, z)
+
+            net_players[id].rotation = (0, player_angle, 0)
+            net_players[id].hand.rotation = (hand_angle, 0, 0)
+            net_players[id].monitor.rotation = (hand_angle, 0, 0)
+
 
     def client_start():
         Thread(target=sending_data, daemon=True).start()

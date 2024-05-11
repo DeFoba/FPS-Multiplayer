@@ -4,34 +4,44 @@ from modules.player import NetworkPlayer
 
 HOST, PORT = '192.168.0.101', 5054
 
+net_players = {}
+
 def start(player, face):
+    net_players['admin'] = player
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((HOST, PORT))
     server.listen()
 
     def accepted_player(client, addr):
+        addr = str(addr)
+        net_players[str(addr)] = [NetworkPlayer(), client]
         print('Connected addr:', addr)
 
-        netwowrk_face = client.recv(1024).decode()
-        client.send(face.encode())
+        net_player, _ = net_players[addr]
 
-
-        net_player = NetworkPlayer(netwowrk_face)
+        client.send(str(addr).encode())
 
         while True:
             data = client.recv(1024).decode()
 
-            # print(data)
-            # print([player.x, player.y, player.z])
-            # print(str(','.join([player.x, player.y, player.z])))
+            x, y, z, player_angle, hand_angle = [pos for pos in data.split(',')]
+            x, y, z, player_angle, hand_angle = float(x), float(y), float(z), float(player_angle), float(hand_angle)
 
-            x, y, z, player_angle, hand_angle = [float(pos) for pos in data.split(',')]
-            net_player.position = (x, y + 1, z)
+            net_player.position = (x, y + 1.8, z)
 
             net_player.rotation = (0, player_angle, 0)
             net_player.hand.rotation = (hand_angle, 0, 0)
+            net_player.monitor.rotation = (hand_angle, 0, 0)
 
-            client.send(str(','.join([str(player.x), str(player.y), str(player.z), str(player.rotation.y), str(player.hand.rotation.x)])).encode())
+    
+    def _thread_sending_all_positions():
+        while True:
+            for addr in net_players:
+                net_player, client = net_players[addr]
+                clients = [net_players[adr][1] for adr in net_players]
+
+                for client in clients:
+                    client.sendall(str(','.join([str(addr), str(net_player.x), str(net_player.y), str(net_player.z), str(net_player.rotation.y), str(net_player.hand.rotation.x)])).encode())
 
 
     def loop_for_accepting():
@@ -41,5 +51,6 @@ def start(player, face):
 
     def start_server():
         Thread(target=loop_for_accepting, daemon=True).start()
+        Thread(target=_thread_sending_all_positions, daemon=True).start()
 
     start_server()
