@@ -34,9 +34,9 @@ class Menu(Entity):
         else: self.command_client()
 
     def command_server(self):
-        import newtwork.server
-        newtwork.server.start(self.player, self.nickname.text)
+        import network.server
+        network.server.start(self.player, self.nickname.text)
 
     def command_client(self):
-        import newtwork.client
-        newtwork.client.start(self.player, self.nickname.text)
+        import network.client
+        network.client.start(self.player, self.nickname.text)

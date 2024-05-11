@@ -62,10 +62,14 @@ class Player(FirstPersonController):
 
         self.hand = PlayerHand()
         self.hand.parent = self
-        # self.hand.parent = self.camera_pivot
+
+        self.send_value = '0,0,0,0,0'
 
     def update(self):
         self.hand.rotation = self.camera_pivot.rotation
+
+        try: self.send_value = f'{self.x},{self.y},{self.z},{self.rotation.y},{self.hand.rotation.x}'
+        except: self.send_value = '0,0,0,0,0'
 
         return super().update()
 
@@ -76,10 +80,11 @@ class Player(FirstPersonController):
         if key == 'space':
             self.jump()
 
-
 class NetworkPlayer(Entity):
     def __init__(self, nickname='0_0', pl_color=color.random_color()):
         super().__init__(collider='box')
+
+        self.send_value = '0,0,0,0,0'
 
         self.color = pl_color
 
@@ -109,5 +114,15 @@ class NetworkPlayer(Entity):
         self.hand.position = (3, 0, 0)
         self.hand.color = self.color
 
+    def from_text_to_move(self, text):
+        x, y, z, player_angle, hand_angle = [float(pos) for pos in text.split(',')]
+
+        self.position = (x, y + 1.8, z)
+
+        self.rotation = (0, player_angle, 0)
+        self.hand.rotation = (hand_angle, 0, 0)
+        self.monitor.rotation = (hand_angle, 0, 0)
+
     def update(self):
-        pass
+        try: self.send_value = f'{self.x},{self.y},{self.z},{self.rotation.y},{self.hand.rotation.x}'
+        except: self.send_value = '0,0,0,0,0'
